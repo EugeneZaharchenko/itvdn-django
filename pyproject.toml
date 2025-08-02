@@ -1,0 +1,45 @@
+[project]
+name = "ITVDN_Django"
+version = "0.1.0"
+description = "Simple ITVDN Django study project"
+authors = [
+    {name = "J0Z", email = "zaheugene80@gmail.com"}
+]
+keywords = ["django", "web", "learning"]
+requires-python = ">=3.13"
+dependencies = [
+    "django>=5.1,<6.0",
+    "django-environ>=0.11.0",  # Environment variables
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-django>=4.8.0",
+    "black>=24.0.0",
+    "ruff>=0.6.0",  # Fast linter/formatter
+    "django-debug-toolbar>=4.4.0",
+]
+
+[project.urls]
+Repository = "https://github.com/EugeneZaharchenko/itvdn-django"
+
+# Tool configurations
+[tool.black]
+line-length = 88
+target-version = ['py313']
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+select = ["E", "F", "I", "N", "W"]
+ignore = ["E203"]
+exclude = ["migrations", "venv", ".venv"]
+
+[tool.ruff.isort]
+known-first-party = ["ITVDN_Django"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "ITVDN_Django.settings"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+addopts = "--tb=short"
