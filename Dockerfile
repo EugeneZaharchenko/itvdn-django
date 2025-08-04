@@ -28,6 +28,11 @@ RUN uv sync
 # Create Django project if manage.py doesn't exist
 RUN uv run django-admin startproject itvdn_django .
 
+# Ensure manage.py exists and is executable
+RUN ls -la /app/ && \
+    test -f /app/manage.py && \
+    chmod +x /app/manage.py
+
 # Create non-root user
 RUN adduser --disabled-password --gecos '' appuser && \
     chown -R appuser:appuser /app

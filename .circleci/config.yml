@@ -1,0 +1,102 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@2.1.1
+
+jobs:
+  test:
+    docker:
+      - image: cimg/python:3.13
+        environment:
+          DJANGO_SETTINGS_MODULE: itvdn_django.settings.test
+          SECRET_KEY: test-secret-key-for-ci
+      - image: cimg/postgres:15.1
+        environment:
+          POSTGRES_USER: django_user
+          POSTGRES_PASSWORD: django_password
+          POSTGRES_DB: django_study_test
+
+    working_directory: ~/project
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install uv
+          command: |
+            curl -LsSf https://astral.sh/uv/install.sh | sh
+            echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> $BASH_ENV
+            source $BASH_ENV
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pyproject.toml" }}
+            - v1-dependencies-
+
+      - run:
+          name: Install dependencies
+          command: |
+            uv sync --extra dev
+
+      - save_cache:
+          paths:
+            - ./.venv
+          key: v1-dependencies-{{ checksum "pyproject.toml" }}
+
+      - run:
+          name: Install dockerize
+          command: |
+            wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.6.1
+
+      - run:
+          name: Wait for PostgreSQL
+          command: dockerize -wait tcp://localhost:5432 -timeout 2m
+
+      - run:
+          name: Setup Django project structure
+          command: |
+            if [ ! -f manage.py ]; then
+              uv run django-admin startproject itvdn_django .
+            fi
+            
+            mkdir -p itvdn_django/settings
+            touch itvdn_django/settings/__init__.py
+            
+            if [ -f itvdn_django/settings.py ]; then
+              mv itvdn_django/settings.py itvdn_django/settings/base.py
+            fi
+
+      - run:
+          name: Run database migrations
+          command: |
+            uv run python manage.py migrate --settings=itvdn_django.settings.test
+
+      - run:
+          name: Run tests
+          command: |
+            uv run python manage.py test --settings=itvdn_django.settings.test
+
+      - run:
+          name: Run linting with flake8
+          command: |
+            uv run flake8 --exclude=.venv
+
+      - run:
+          name: Run code formatting check
+          command: |
+            uv run black --check . --exclude=.venv
+
+      - run:
+          name: Run import sorting check
+          command: |
+            uv run ruff check --select I --exclude=.venv
+
+workflows:
+  test-and-lint:
+    jobs:
+      - test:
+          filters:
+            branches:
+              only: /.*/
