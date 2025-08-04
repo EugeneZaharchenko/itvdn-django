@@ -9,7 +9,8 @@ keywords = ["django", "web", "learning"]
 requires-python = ">=3.13"
 dependencies = [
     "django>=5.1,<6.0",
-    "django-environ>=0.11.0",  # Environment variables
+    "django-environ>=0.11.0", # Environment variables,
+    "psycopg[binary]>=3.1.0",
 ]
 
 [project.optional-dependencies]
