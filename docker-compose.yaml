@@ -1,0 +1,36 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app/host_files  # Mount host files separately
+      - /app/.venv  # Exclude venv from volume mount
+    environment:
+      - DEBUG=True
+      - DJANGO_SETTINGS_MODULE=itvdn_django.settings
+    depends_on:
+      - db
+    restart: unless-stopped
+    command: >
+      sh -c "if [ ! -f /app/manage.py ]; then 
+               echo 'Creating Django project...';
+               uv run django-admin startproject itvdn_django /app;
+             fi &&
+             uv run python manage.py migrate &&
+             uv run python manage.py runserver 0.0.0.0:8000"
+
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=django_study
+      - POSTGRES_USER=django_user
+      - POSTGRES_PASSWORD=django_password
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
