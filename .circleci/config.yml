@@ -45,13 +45,25 @@ jobs:
 
       - run:
           name: Wait for PostgreSQL
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+          command: dockerize -wait tcp://localhost:5432 -timeout 2m
 
       - run:
-          name: Create Django project if not exists
+          name: Setup Django project structure
           command: |
+            # Create the project structure if it doesn't exist
             if [ ! -f manage.py ]; then
               uv run django-admin startproject itvdn_django .
+            fi
+            
+            # Create settings directory structure
+            mkdir -p itvdn_django/settings
+            
+            # Create __init__.py in settings directory
+            touch itvdn_django/settings/__init__.py
+            
+            # Move default settings.py to base.py if it exists
+            if [ -f itvdn_django/settings.py ]; then
+              mv itvdn_django/settings.py itvdn_django/settings/base.py
             fi
 
       - run:
@@ -67,17 +79,17 @@ jobs:
       - run:
           name: Run linting with flake8
           command: |
-            uv run flake8
+            uv run flake8 --exclude=.venv
 
       - run:
           name: Run code formatting check
           command: |
-            uv run black --check .
+            uv run black --check . --exclude=.venv
 
       - run:
           name: Run import sorting check
           command: |
-            uv run ruff check --select I
+            uv run ruff check --select I --exclude=.venv
 
       - store_test_results:
           path: test-results
