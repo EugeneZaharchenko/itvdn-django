@@ -38,7 +38,7 @@ exclude = [".venv", "migrations", "__pycache__"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W"]
-ignore = ["E203", "W503"]
+ignore = ["E203"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["itvdn_django"]
