@@ -63,14 +63,11 @@ jobs:
             
             mkdir -p itvdn_django/settings
             touch itvdn_django/settings/__init__.py
-            
-            if [ -f itvdn_django/settings.py ]; then
-              mv itvdn_django/settings.py itvdn_django/settings/base.py
-            fi
 
       - run:
-          name: Run database migrations
+          name: Create and run initial migrations
           command: |
+            uv run python manage.py makemigrations --settings=itvdn_django.settings.test
             uv run python manage.py migrate --settings=itvdn_django.settings.test
 
       - run:
