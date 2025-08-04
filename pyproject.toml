@@ -28,22 +28,16 @@ Repository = "https://github.com/EugeneZaharchenko/itvdn-django"
 
 # Tool configurations
 [tool.black]
-line-length = 88
+line-length = 119
 target-version = ['py313']
 
 [tool.ruff]
-line-length = 88
-target-version = "py313"
-select = ["E", "F", "I", "N", "W"]
-ignore = ["E203"]
-exclude = ["migrations", "venv", ".venv"]
-
-[tool.ruff]
 line-length = 119
+target-version = "py313"
 exclude = [".venv", "migrations", "__pycache__"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
+select = ["E", "F", "I", "N", "W"]
 ignore = ["E203", "W503"]
 
 [tool.ruff.lint.isort]
