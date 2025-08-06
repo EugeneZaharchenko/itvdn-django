@@ -9,7 +9,6 @@ jobs:
       - image: cimg/python:3.13
         environment:
           DJANGO_SETTINGS_MODULE: settings_ci.test
-          # Environment variables that your test.py file expects
           SECRET_KEY: test-secret-key-for-ci-very-long-key-1234567890123456789012345678901234567890
           DEBUG: False
           POSTGRES_HOST: localhost
@@ -64,39 +63,8 @@ jobs:
           command: dockerize -wait tcp://localhost:5432 -timeout 2m
 
       - run:
-          name: Verify project structure
-          command: |
-            echo "=== Project Structure Verification ==="
-            if [ ! -f manage.py ]; then
-              echo "❌ Error: manage.py not found!"
-              exit 1
-            else
-              echo "✅ manage.py found"
-            fi
-            
-            if [ ! -f settings_ci/test.py ]; then
-              echo "❌ Error: settings_ci/test.py not found!"
-              echo "Available files in settings_ci/:"
-              ls -la settings_ci/ || echo "settings_ci directory not found"
-              exit 1
-            else
-              echo "✅ settings_ci/test.py found"
-            fi
-            
-            if [ ! -f settings.py ]; then
-              echo "❌ Error: settings.py not found!"
-              exit 1
-            else
-              echo "✅ settings.py found"
-            fi
-            
-            echo "✅ All required files verified"
-
-      - run:
           name: Create .env file for tests
           command: |
-            # Create a minimal .env file that your test.py expects to read
-            # Fixed: Using echo instead of heredoc to avoid CircleCI v2.1+ escaping issues
             echo "SECRET_KEY=$SECRET_KEY" > .env
             echo "DEBUG=False" >> .env
             echo "POSTGRES_HOST=$POSTGRES_HOST" >> .env
@@ -106,6 +74,7 @@ jobs:
             echo "POSTGRES_PORT=$POSTGRES_PORT" >> .env
             echo "LANGUAGE_CODE=$LANGUAGE_CODE" >> .env
             echo "TIME_ZONE=$TIME_ZONE" >> .env
+            echo "ALLOWED_HOSTS=localhost,127.0.0.1,*" >> .env
             echo "✅ Created .env file for tests"
 
       - run:

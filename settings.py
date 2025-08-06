@@ -8,13 +8,18 @@ BASE_DIR = Path(__file__).resolve().parent
 # Initialize environment variables
 env = environ.Env()
 
-# Read .env file
-env_file = BASE_DIR / ".env"
-if env_file.exists():
-    environ.Env.read_env(env_file)
-    print(f"Loading environment from: {env_file}")
+# Read environment files with Docker priority
+docker_env_file = BASE_DIR / ".env.docker"
+regular_env_file = BASE_DIR / ".env"
+
+if docker_env_file.exists():
+    environ.Env.read_env(docker_env_file)
+    print(f"Loading environment from: {docker_env_file}")
+elif regular_env_file.exists():
+    environ.Env.read_env(regular_env_file)
+    print(f"Loading environment from: {regular_env_file}")
 else:
-    print(f"Warning: .env file not found at {env_file}")
+    print("Warning: No .env file found")
 
 # Quick Access to env vars - all values must be in .env
 SECRET_KEY = env("SECRET_KEY")
@@ -66,31 +71,21 @@ TEMPLATES = [
 WSGI_APPLICATION = "wsgi.application"
 
 # Database - Choose based on environment
-if os.environ.get("POSTGRES_HOST"):
-    # Use PostgreSQL (for Docker or production)
-    # Force 'db' as host if we're in a Docker container
-    db_host = "db" if os.path.exists("/.dockerenv") else env("POSTGRES_HOST")
-
-    DATABASES = {
-        "default": env.db(
-            "DATABASE_URL",
-            default=f"postgres://{env('POSTGRES_USER')}:"
-            f"{env('POSTGRES_PASSWORD')}@"
-            f"{db_host}:"
-            f"{env('POSTGRES_PORT')}/"
-            f"{env('POSTGRES_DB')}",
-        )
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env("POSTGRES_DB"),
+        "USER": env("POSTGRES_USER"),
+        "PASSWORD": env("POSTGRES_PASSWORD"),
+        "HOST": env("POSTGRES_HOST"),  # This will be 'db' from .env.docker
+        "PORT": env("POSTGRES_PORT"),
     }
-    print(f"Using PostgreSQL at {db_host}")
-else:
-    # Use SQLite for local development
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
+} if env("POSTGRES_HOST", default=None) else {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
-    print("Using SQLite for development")
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
