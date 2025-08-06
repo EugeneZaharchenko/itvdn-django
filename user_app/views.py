@@ -31,4 +31,3 @@ class AllUsers(TemplateView):
 
         context['users'] = Person.people.get_staff_users()
         return context
-
