@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent
 # Initialize environment variables
 env = environ.Env()
 
-# Read environment files with Docker priority
+# Read Docker env file first, then fallback to .env
 docker_env_file = BASE_DIR / ".env.docker"
 regular_env_file = BASE_DIR / ".env"
 
@@ -25,9 +25,9 @@ else:
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool("DEBUG")
+DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost"])
 
 # Application definition
 INSTALLED_APPS = [
@@ -70,36 +70,49 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "wsgi.application"
 
-# Database - Choose based on environment
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("POSTGRES_DB"),
-        "USER": env("POSTGRES_USER"),
-        "PASSWORD": env("POSTGRES_PASSWORD"),
-        "HOST": env("POSTGRES_HOST"),  # This will be 'db' from .env.docker
-        "PORT": env("POSTGRES_PORT"),
+# Database - Simplified approach
+postgres_host = env("POSTGRES_HOST", default=None)
+
+if postgres_host:
+    # PostgreSQL configuration
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("POSTGRES_DB"),
+            "USER": env("POSTGRES_USER"),
+            "PASSWORD": env("POSTGRES_PASSWORD"),
+            "HOST": postgres_host,
+            "PORT": env.int("POSTGRES_PORT", default=5432),
+        }
     }
-} if env("POSTGRES_HOST", default=None) else {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    print(f"Using PostgreSQL at: {postgres_host}")
+else:
+    # SQLite fallback
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+    print("Using SQLite for development")
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation."
+        "UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": "django.contrib.auth.password_validation."
+        "MinimumLengthValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation."
+        "CommonPasswordValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation."
+        "NumericPasswordValidator",
     },
 ]
 

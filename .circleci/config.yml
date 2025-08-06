@@ -81,50 +81,41 @@ jobs:
           name: Verify Django settings
           command: |
             source .venv/bin/activate
-            echo "=== Django Settings Verification ==="
             python manage.py check --settings=settings_ci.test
-            echo "✅ Django settings verified"
 
       - run:
           name: Create and run migrations
           command: |
             source .venv/bin/activate
-            echo "=== Creating and Running Migrations ==="
             python manage.py makemigrations --settings=settings_ci.test --verbosity=2
             python manage.py migrate --settings=settings_ci.test --verbosity=2
-            echo "✅ Migrations completed"
 
       - run:
           name: Run tests
           command: |
             source .venv/bin/activate
-            echo "=== Running Tests ==="
             python manage.py test --settings=settings_ci.test --verbosity=2
-            echo "✅ Tests completed"
 
       - run:
           name: Run linting with flake8
           command: |
             source .venv/bin/activate
-            echo "=== Running flake8 linting ==="
-            flake8 --exclude=.venv,.git,__pycache__,migrations,settings_ci --max-line-length=88
-            echo "✅ Linting completed"
+            flake8 --exclude=.venv,.git,__pycache__,migrations,settings_ci \
+                   --max-line-length=88 \
+                   --extend-ignore=E203,W503
 
       - run:
           name: Run code formatting check
           command: |
             source .venv/bin/activate
-            echo "=== Running black formatting check ==="
-            black --check . --exclude='/(\.venv|\.git|__pycache__|migrations)/'
-            echo "✅ Formatting check completed"
+            black --check . --exclude='/(\.venv|\.git|__pycache__|migrations)/' \
+                  --line-length=88
 
       - run:
           name: Run import sorting check
           command: |
             source .venv/bin/activate
-            echo "=== Running ruff import sorting check ==="
             ruff check --select I --exclude=.venv,.git,__pycache__,migrations .
-            echo "✅ Import sorting check completed"
 
 workflows:
   test-and-lint:
