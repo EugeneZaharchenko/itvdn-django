@@ -96,17 +96,16 @@ jobs:
           name: Create .env file for tests
           command: |
             # Create a minimal .env file that your test.py expects to read
-            cat > .env << EOF
-            SECRET_KEY=$SECRET_KEY
-            DEBUG=False
-            POSTGRES_HOST=$POSTGRES_HOST
-            POSTGRES_USER=$POSTGRES_USER
-            POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-            POSTGRES_DB=$POSTGRES_DB
-            POSTGRES_PORT=$POSTGRES_PORT
-            LANGUAGE_CODE=$LANGUAGE_CODE
-            TIME_ZONE=$TIME_ZONE
-            EOF
+            # Fixed: Using echo instead of heredoc to avoid CircleCI v2.1+ escaping issues
+            echo "SECRET_KEY=$SECRET_KEY" > .env
+            echo "DEBUG=False" >> .env
+            echo "POSTGRES_HOST=$POSTGRES_HOST" >> .env
+            echo "POSTGRES_USER=$POSTGRES_USER" >> .env
+            echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> .env
+            echo "POSTGRES_DB=$POSTGRES_DB" >> .env
+            echo "POSTGRES_PORT=$POSTGRES_PORT" >> .env
+            echo "LANGUAGE_CODE=$LANGUAGE_CODE" >> .env
+            echo "TIME_ZONE=$TIME_ZONE" >> .env
             echo "✅ Created .env file for tests"
 
       - run:
