@@ -8,8 +8,17 @@ jobs:
     docker:
       - image: cimg/python:3.13
         environment:
-          DJANGO_SETTINGS_MODULE: itvdn_django.settings.test
-          SECRET_KEY: test-secret-key-for-ci
+          DJANGO_SETTINGS_MODULE: settings_ci.test
+          # Environment variables that your test.py file expects
+          SECRET_KEY: test-secret-key-for-ci-very-long-key-1234567890123456789012345678901234567890
+          DEBUG: False
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: django_user
+          POSTGRES_PASSWORD: django_password
+          POSTGRES_DB: django_study_test
+          POSTGRES_PORT: 5432
+          LANGUAGE_CODE: en-us
+          TIME_ZONE: UTC
       - image: cimg/postgres:15.1
         environment:
           POSTGRES_USER: django_user
@@ -55,40 +64,99 @@ jobs:
           command: dockerize -wait tcp://localhost:5432 -timeout 2m
 
       - run:
-          name: Setup Django project structure
+          name: Verify project structure
           command: |
+            echo "=== Project Structure Verification ==="
             if [ ! -f manage.py ]; then
-              uv run django-admin startproject itvdn_django .
+              echo "❌ Error: manage.py not found!"
+              exit 1
+            else
+              echo "✅ manage.py found"
             fi
             
-            mkdir -p itvdn_django/settings
-            touch itvdn_django/settings/__init__.py
+            if [ ! -f settings_ci/test.py ]; then
+              echo "❌ Error: settings_ci/test.py not found!"
+              echo "Available files in settings_ci/:"
+              ls -la settings_ci/ || echo "settings_ci directory not found"
+              exit 1
+            else
+              echo "✅ settings_ci/test.py found"
+            fi
+            
+            if [ ! -f settings.py ]; then
+              echo "❌ Error: settings.py not found!"
+              exit 1
+            else
+              echo "✅ settings.py found"
+            fi
+            
+            echo "✅ All required files verified"
 
       - run:
-          name: Create and run initial migrations
+          name: Create .env file for tests
           command: |
-            uv run python manage.py makemigrations --settings=itvdn_django.settings.test
-            uv run python manage.py migrate --settings=itvdn_django.settings.test
+            # Create a minimal .env file that your test.py expects to read
+            cat > .env << EOF
+            SECRET_KEY=$SECRET_KEY
+            DEBUG=False
+            POSTGRES_HOST=$POSTGRES_HOST
+            POSTGRES_USER=$POSTGRES_USER
+            POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+            POSTGRES_DB=$POSTGRES_DB
+            POSTGRES_PORT=$POSTGRES_PORT
+            LANGUAGE_CODE=$LANGUAGE_CODE
+            TIME_ZONE=$TIME_ZONE
+            EOF
+            echo "✅ Created .env file for tests"
+
+      - run:
+          name: Verify Django settings
+          command: |
+            source .venv/bin/activate
+            echo "=== Django Settings Verification ==="
+            python manage.py check --settings=settings_ci.test
+            echo "✅ Django settings verified"
+
+      - run:
+          name: Create and run migrations
+          command: |
+            source .venv/bin/activate
+            echo "=== Creating and Running Migrations ==="
+            python manage.py makemigrations --settings=settings_ci.test --verbosity=2
+            python manage.py migrate --settings=settings_ci.test --verbosity=2
+            echo "✅ Migrations completed"
 
       - run:
           name: Run tests
           command: |
-            uv run python manage.py test --settings=itvdn_django.settings.test
+            source .venv/bin/activate
+            echo "=== Running Tests ==="
+            python manage.py test --settings=settings_ci.test --verbosity=2
+            echo "✅ Tests completed"
 
       - run:
           name: Run linting with flake8
           command: |
-            uv run flake8 --exclude=.venv
+            source .venv/bin/activate
+            echo "=== Running flake8 linting ==="
+            flake8 --exclude=.venv,.git,__pycache__,migrations,settings_ci --max-line-length=88
+            echo "✅ Linting completed"
 
       - run:
           name: Run code formatting check
           command: |
-            uv run black --check . --exclude=.venv
+            source .venv/bin/activate
+            echo "=== Running black formatting check ==="
+            black --check . --exclude='/(\.venv|\.git|__pycache__|migrations)/'
+            echo "✅ Formatting check completed"
 
       - run:
           name: Run import sorting check
           command: |
-            uv run ruff check --select I --exclude=.venv
+            source .venv/bin/activate
+            echo "=== Running ruff import sorting check ==="
+            ruff check --select I --exclude=.venv,.git,__pycache__,migrations .
+            echo "✅ Import sorting check completed"
 
 workflows:
   test-and-lint:

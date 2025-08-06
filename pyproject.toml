@@ -8,9 +8,9 @@ authors = [
 keywords = ["django", "web", "learning"]
 requires-python = ">=3.13"
 dependencies = [
-    "django>=5.1,<6.0",
+    "django>=5.0,<6.0",
     "django-environ>=0.11.0", # Environment variables,
-    "psycopg[binary]>=3.1.0",
+    "psycopg[binary]>=3.2.9",
 ]
 
 [project.optional-dependencies]
@@ -47,3 +47,10 @@ known-first-party = ["itvdn_django"]
 DJANGO_SETTINGS_MODULE = "itvdn_django.settings"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
 addopts = "--tb=short"
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "pytest>=8.4.1",
+    "ruff>=0.12.7",
+]
