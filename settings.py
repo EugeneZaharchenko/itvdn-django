@@ -1,5 +1,6 @@
-import environ
 from pathlib import Path
+import os
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
@@ -11,14 +12,24 @@ env = environ.Env()
 docker_env_file = BASE_DIR / ".env.docker"
 regular_env_file = BASE_DIR / ".env"
 
-if docker_env_file.exists():
-    environ.Env.read_env(docker_env_file)
-    print(f"Loading environment from: {docker_env_file}")
-elif regular_env_file.exists():
-    environ.Env.read_env(regular_env_file)
-    print(f"Loading environment from: {regular_env_file}")
+is_local = os.getenv('LOCAL', '').lower() == 'true'
+
+if is_local:
+    # Force use of regular .env file
+    if regular_env_file.exists():
+        env.read_env(regular_env_file)  # Use env.read_env(), not environ.Env.read_env()
+        print(f"Loading LOCAL environment from: {regular_env_file}")
+    else:
+        print(f"Warning: Local env file {regular_env_file} not found!")
 else:
-    print("Warning: No .env file found")
+    if docker_env_file.exists():
+        env.read_env(docker_env_file)  # Use env.read_env()
+        print(f"Loading environment from: {docker_env_file}")
+    elif regular_env_file.exists():
+        env.read_env(regular_env_file)  # Use env.read_env()
+        print(f"Loading fallback environment from: {regular_env_file}")
+    else:
+        print("Warning: No .env file found")
 
 # Quick Access to env vars - all values must be in .env
 SECRET_KEY = env("SECRET_KEY")

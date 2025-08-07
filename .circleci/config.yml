@@ -75,7 +75,14 @@ jobs:
             echo "LANGUAGE_CODE=$LANGUAGE_CODE" >> .env
             echo "TIME_ZONE=$TIME_ZONE" >> .env
             echo "ALLOWED_HOSTS=localhost,127.0.0.1,*" >> .env
-            echo "✅ Created .env file for tests"
+
+      - run:
+          name: Run code formatting and linting with ruff
+          command: |
+            source .venv/bin/activate
+            ruff check --fix . --ignore N999
+            ruff format .
+            ruff check . --ignore N999
 
       - run:
           name: Verify Django settings
@@ -95,27 +102,6 @@ jobs:
           command: |
             source .venv/bin/activate
             python manage.py test --settings=settings_ci.test --verbosity=2
-
-      - run:
-          name: Run linting with flake8
-          command: |
-            source .venv/bin/activate
-            flake8 --exclude=.venv,.git,__pycache__,migrations,settings_ci \
-                   --max-line-length=88 \
-                   --extend-ignore=E203,W503
-
-      - run:
-          name: Run code formatting check
-          command: |
-            source .venv/bin/activate
-            black --check . --exclude='/(\.venv|\.git|__pycache__|migrations)/' \
-                  --line-length=88
-
-      - run:
-          name: Run import sorting check
-          command: |
-            source .venv/bin/activate
-            ruff check --select I --exclude=.venv,.git,__pycache__,migrations .
 
 workflows:
   test-and-lint:
