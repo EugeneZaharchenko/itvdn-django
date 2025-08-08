@@ -1,0 +1,31 @@
+# ruff.toml
+
+# Line length setting (goes in root, not in [lint])
+line-length = 88
+
+# Exclude directories
+exclude = [
+    ".venv",
+    ".git",
+    "__pycache__",
+    "migrations",
+]
+
+[lint]
+# Ignore naming convention rules for existing project
+ignore = [
+    "N999",  # Invalid module name (your project name)
+]
+
+# Select the rules you want to enforce
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort (import sorting)
+    "N",   # pep8-naming (but we ignore N999 above)
+]
+
+[format]
+# Use double quotes (matches Black)
+quote-style = "double"

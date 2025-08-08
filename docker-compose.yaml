@@ -4,31 +4,76 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/app/host_files  # Mount host files separately
-      - /app/.venv  # Exclude venv from volume mount
+      - .:/app  # Mount entire project directory
+      - /app/.venv  # Preserve container's virtual environment
+      - /app/.uv  # Preserve uv cache
     environment:
       - DEBUG=True
-      - DJANGO_SETTINGS_MODULE=itvdn_django.settings
+      - DJANGO_SETTINGS_MODULE=settings  # Fixed: no longer itvdn_django.settings
+      - PYTHONPATH=/app
+      - POSTGRES_HOST=db  # Override the .env file value
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB:-django_study}
+      - POSTGRES_PORT=5432
+    env_file:
+      - .env.-docker  # Use Docker-specific environment file
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: unless-stopped
+    working_dir: /app
     command: >
-      sh -c "if [ ! -f /app/manage.py ]; then 
-               echo 'Creating Django project...';
-               uv run django-admin startproject itvdn_django /app;
-             fi &&
-             uv run python manage.py migrate &&
-             uv run python manage.py runserver 0.0.0.0:8000"
+      sh -c "
+        # Check if Django project exists
+        if [ ! -f manage.py ]; then 
+          echo 'No manage.py found. Please ensure your Django project is properly set up.';
+          exit 1;
+        fi &&
+      
+        # Wait for database using Django management command
+        echo 'Waiting for database...' &&
+        until uv run python manage.py check --database default; do
+          echo 'Database not ready, waiting...';
+          sleep 2;
+        done &&
+        echo 'Database is ready!' &&
+      
+        # Run migrations
+        echo 'Running migrations...' &&
+        uv run python manage.py migrate &&
+      
+        # Create superuser if specified
+        if [ ! -z \"\$DJANGO_SUPERUSER_USERNAME\" ]; then
+          echo 'Creating superuser...' &&
+          uv run python manage.py createsuperuser --noinput || echo 'Superuser already exists or error occurred';
+        fi &&
+      
+        # Collect static files (uncomment if needed)
+        # uv run python manage.py collectstatic --noinput &&
+      
+        # Start development server
+        echo 'Starting development server...' &&
+        uv run python manage.py runserver 0.0.0.0:8000
+      "
 
   db:
     image: postgres:15-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    env_file:
-      - .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-django_study}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DATABASE_URL=
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB:-django_study}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

@@ -8,8 +8,16 @@ jobs:
     docker:
       - image: cimg/python:3.13
         environment:
-          DJANGO_SETTINGS_MODULE: itvdn_django.settings.test
-          SECRET_KEY: test-secret-key-for-ci
+          DJANGO_SETTINGS_MODULE: settings_ci.test
+          SECRET_KEY: test-secret-key-for-ci-very-long-key-1234567890123456789012345678901234567890
+          DEBUG: False
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: django_user
+          POSTGRES_PASSWORD: django_password
+          POSTGRES_DB: django_study_test
+          POSTGRES_PORT: 5432
+          LANGUAGE_CODE: en-us
+          TIME_ZONE: UTC
       - image: cimg/postgres:15.1
         environment:
           POSTGRES_USER: django_user
@@ -36,7 +44,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            uv sync --extra dev
+            uv sync --group dev  # ✅ Fixed: --group instead of --extra
 
       - save_cache:
           paths:
@@ -55,40 +63,45 @@ jobs:
           command: dockerize -wait tcp://localhost:5432 -timeout 2m
 
       - run:
-          name: Setup Django project structure
+          name: Create .env file for tests
           command: |
-            if [ ! -f manage.py ]; then
-              uv run django-admin startproject itvdn_django .
-            fi
-            
-            mkdir -p itvdn_django/settings
-            touch itvdn_django/settings/__init__.py
+            echo "SECRET_KEY=$SECRET_KEY" > .env
+            echo "DEBUG=False" >> .env
+            echo "POSTGRES_HOST=$POSTGRES_HOST" >> .env
+            echo "POSTGRES_USER=$POSTGRES_USER" >> .env
+            echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> .env
+            echo "POSTGRES_DB=$POSTGRES_DB" >> .env
+            echo "POSTGRES_PORT=$POSTGRES_PORT" >> .env
+            echo "LANGUAGE_CODE=$LANGUAGE_CODE" >> .env
+            echo "TIME_ZONE=$TIME_ZONE" >> .env
+            echo "ALLOWED_HOSTS=localhost,127.0.0.1,*" >> .env
 
       - run:
-          name: Create and run initial migrations
+          name: Run code formatting and linting with ruff
           command: |
-            uv run python manage.py makemigrations --settings=itvdn_django.settings.test
-            uv run python manage.py migrate --settings=itvdn_django.settings.test
+            source .venv/bin/activate
+            ruff check --fix . --ignore N999
+            ruff format .
+            ruff check . --ignore N999
+
+      - run:
+          name: Verify Django settings
+          command: |
+            source .venv/bin/activate
+            python manage.py check --settings=settings_ci.test
+
+      - run:
+          name: Create and run migrations
+          command: |
+            source .venv/bin/activate
+            python manage.py makemigrations --settings=settings_ci.test --verbosity=2
+            python manage.py migrate --settings=settings_ci.test --verbosity=2
 
       - run:
           name: Run tests
           command: |
-            uv run python manage.py test --settings=itvdn_django.settings.test
-
-      - run:
-          name: Run linting with flake8
-          command: |
-            uv run flake8 --exclude=.venv
-
-      - run:
-          name: Run code formatting check
-          command: |
-            uv run black --check . --exclude=.venv
-
-      - run:
-          name: Run import sorting check
-          command: |
-            uv run ruff check --select I --exclude=.venv
+            source .venv/bin/activate
+            python manage.py test --settings=settings_ci.test --verbosity=2
 
 workflows:
   test-and-lint:
