@@ -5,6 +5,10 @@ import environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
 
+TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
+MEDIA_URL = 'media/'
+MEDIA_DIR = os.path.join(BASE_DIR, 'media')
+
 # Initialize environment variables
 env = environ.Env()
 
@@ -48,6 +52,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "user_app",  # Your custom app
+    "phone_field"
 ]
 
 MIDDLEWARE = [
@@ -65,7 +70,7 @@ ROOT_URLCONF = "urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -134,6 +139,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
