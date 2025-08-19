@@ -33,7 +33,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "user_app"
+    "user_app",
+    "phone_field"
 ]
 
 MIDDLEWARE = [
@@ -47,7 +48,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "urls"
-
+AUTH_USER_MODEL = 'user_app.User'
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
