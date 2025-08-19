@@ -20,14 +20,13 @@ from django.contrib import admin
 from django.urls import path
 
 from django.conf import settings
-from user_app.views import AllUsers, CreatUser, Index, UpdateProfile
+from user_app.views import AllUsers, CreatUser, Index
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', Index.as_view(), name="index"),
     path('signup/', CreatUser.as_view(), name="signup"),
-    path('all_users/', AllUsers.as_view(), name="all_users"),
-    path('profile/<pk>', UpdateProfile.as_view(), name="profile")
+    path('all_users/', AllUsers.as_view(), name="all_users")
 ]
 if settings.DEBUG:  # Only serve media in development
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -130,6 +130,8 @@ AUTH_PASSWORD_VALIDATORS = [
         "NumericPasswordValidator",
     },
 ]
+# Tell Django to use your custom User model instead of the default one
+AUTH_USER_MODEL = 'user_app.User'
 
 # Internationalization
 LANGUAGE_CODE = "en-us"
