@@ -1,7 +1,7 @@
 from django.test import TestCase
-from django.contrib.auth import get_user_model  # ✅ Use this instead
+from django.contrib.auth import get_user_model
 
-# ✅ Get the correct User model (whatever AUTH_USER_MODEL points to)
+# Get the correct User model
 User = get_user_model()
 
 class SampleTestCase(TestCase):
@@ -17,14 +17,16 @@ class SampleTestCase(TestCase):
 
     def test_user_creation(self):
         """Test user model"""
-        # ✅ Now using the correct custom User model
+        # ✅ Don't pass 'username' - your model uses email as USERNAME_FIELD
         user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            email='test@example.com',  # This is the USERNAME_FIELD
+            password='testpass123',
+            first_name='Test',         # Optional fields from your model
+            last_name='User'          # Optional fields from your model
         )
-        self.assertEqual(user.username, 'testuser')
         self.assertEqual(user.email, 'test@example.com')
+        self.assertEqual(user.first_name, 'Test')
+        self.assertEqual(user.last_name, 'User')
         self.assertTrue(user.check_password('testpass123'))
 
 class ViewTestCase(TestCase):
