@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "user_app",  # Your custom app
-    "phone_field"
+    "phone_field",
+    "itvdn_shop"
 ]
 
 MIDDLEWARE = [
