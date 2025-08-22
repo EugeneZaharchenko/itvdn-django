@@ -29,4 +29,5 @@ urlpatterns = [
     path('all_users/', AllUsers.as_view(), name="all_users")
 ]
 if settings.DEBUG:  # Only serve media in development
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
