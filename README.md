@@ -21,3 +21,8 @@ uv run python manage.py runserver
 ### Docker compose start
 1. Stop db container
 2. docker compose up
+
+### Styling
+1. Django-grappelli
+2. django-admin-index
+3. django-suit

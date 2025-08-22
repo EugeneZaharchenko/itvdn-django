@@ -1,8 +1,8 @@
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import UserCreationForm
-from django.views.generic import FormView, TemplateView
-
-from .models import Person
+from django.contrib.auth import login, authenticate
+from .forms import RegisterForm
+from django.views.generic import TemplateView
+from django.views.generic import FormView
+from .models import User
 
 
 class Index(TemplateView):
@@ -10,15 +10,13 @@ class Index(TemplateView):
 
 
 class CreatUser(FormView):
-    form_class = UserCreationForm
+    form_class = RegisterForm
     template_name = 'signup.html'
     success_url = '/'
 
     def form_valid(self, form):
-        form.save()
-        username = form.cleaned_data.get('username')
-        password = form.cleaned_data.get('password1')
-        user = authenticate(username=username, password=password)
+        user = form.save()
+        authenticate(username=user.email, password=user.password)
         login(self.request, user)
         return super(CreatUser, self).form_valid(form)
 
@@ -29,5 +27,20 @@ class AllUsers(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['users'] = Person.people.get_staff_users()
+        users = User.objects.all()
+
+        # Create normalized user data
+        users_data = []
+        for user in users:
+            users_data.append({
+                'id': user.id,
+                'email': user.email,  # Your User model uses email, not username
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'avatar': user.avatar,  # Direct field in your User model
+                'date_joined': user.date_joined,
+                'is_active': user.is_active,
+            })
+
+        context['users'] = users_data
         return context

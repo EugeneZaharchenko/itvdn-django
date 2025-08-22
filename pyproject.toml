@@ -11,6 +11,8 @@ dependencies = [
     "django>=5.0,<6.0",
     "django-environ>=0.11.0",
     "psycopg[binary]>=3.2.9",
+    "Pillow>=11.3.0",
+    "django-phone-field>=1.8.1",
 ]
 
 [project.urls]
