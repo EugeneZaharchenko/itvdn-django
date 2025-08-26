@@ -27,14 +27,19 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
+    "itvdn_shop",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "user_app",
-    "phone_field"
+    "user_app",  # Your custom app
+    "rest_framework",
+    "phone_field",
+    "graph_app",
+    "graph_app_two",
+    "rest_api",
 ]
 
 MIDDLEWARE = [

@@ -3,10 +3,6 @@ from django.test import TestCase
 
 
 class SampleTestCase(TestCase):
-    # @classmethod
-    # def setUpClass(cls):
-    #     super().setUpClass()
-    #     cls.User = get_user_model()
 
     def test_sample_assertion(self):
         """Test basic assertion"""
