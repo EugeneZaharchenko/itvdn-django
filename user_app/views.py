@@ -1,7 +1,7 @@
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import authenticate, login
+from django.views.generic import FormView, TemplateView
+
 from .forms import RegisterForm
-from django.views.generic import TemplateView
-from django.views.generic import FormView
 from .models import User
 
 

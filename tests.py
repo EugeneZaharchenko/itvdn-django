@@ -1,10 +1,13 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 
-# Get the correct User model
-User = get_user_model()
 
 class SampleTestCase(TestCase):
+    # @classmethod
+    # def setUpClass(cls):
+    #     super().setUpClass()
+    #     cls.User = get_user_model()
+
     def test_sample_assertion(self):
         """Test basic assertion"""
         self.assertTrue(True)
@@ -17,8 +20,9 @@ class SampleTestCase(TestCase):
 
     def test_user_creation(self):
         """Test user model"""
+        # Get the correct User model
         # ✅ Don't pass 'username' - your model uses email as USERNAME_FIELD
-        user = User.objects.create_user(
+        user = get_user_model().objects.create_user(
             email='test@example.com',  # This is the USERNAME_FIELD
             password='testpass123',
             first_name='Test',         # Optional fields from your model

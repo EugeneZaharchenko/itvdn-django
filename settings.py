@@ -1,5 +1,6 @@
-from pathlib import Path
 import os
+from pathlib import Path
+
 import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -53,7 +54,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "user_app",  # Your custom app
+    "rest_framework",
     "phone_field",
+    "graph_app",
+    "graph_app_two",
+    "rest_api",
 ]
 
 MIDDLEWARE = [

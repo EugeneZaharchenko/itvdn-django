@@ -1,8 +1,14 @@
 from django.contrib import admin
-from django.utils.html import format_html
 
-from .models import TV, Notebook, Dishwasher, Brand, Category, VacuumCleaner, Item, Promo
-
+from .models import (
+    TV,
+    Brand,
+    Category,
+    Dishwasher,
+    Notebook,
+    Promo,
+    VacuumCleaner,
+)
 
 for model in [TV, Notebook, Category, VacuumCleaner, Promo, Brand]:
     admin.site.register(model)
