@@ -1,0 +1,206 @@
+{% load static %}
+{% load humanize %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ITVDN Django</title>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- Custom css -->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script type="text/javascript" src='{% static "js/jquery.min.js" %}'></script>
+    <script type="text/javascript" src='{% static "js/popper.min.js" %}'></script>
+    <script type="text/javascript" src='{% static "js/bootstrap.min.js" %}'></script>
+    <script type="text/javascript" src='{% static "js/Chart.min.js" %}'></script>
+</head>
+<body>
+{% include "main/header.html" %}
+
+{% block content %}
+    <!-- Hero Section with Header Image -->
+    <div class="container-fluid p-0 mb-4">
+        <div class="position-relative">
+            <img src="{% static 'img/header.jpg' %}" alt="Header Image" class="img-fluid w-100" style="max-height: 300px; object-fit: cover;">
+            <div class="position-absolute top-50 start-50 translate-middle text-center text-white">
+                <h1 class="display-4 fw-bold text-shadow">My First Bootstrap Page</h1>
+                <p class="lead">Resize this responsive page to see the effect!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Using 'now' template tag to display current date/time -->
+        <div class="text-center mb-4">
+            <small class="text-muted">Generated on {% now "F j, Y \a\t g:i A" %}</small>
+        </div>
+
+        <!-- Using 'if' and 'length' filter -->
+        {% if some_data|length > 0 %}
+            <div class="alert alert-info">
+                <strong>Data Count:</strong> We have {{ some_data|length|pluralize:"item,items" }} to display
+                {% if some_data|length > 5 %}
+                    (showing a lot of data!)
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="alert alert-warning">
+                <strong>No Data:</strong> Sorry, no items to display
+            </div>
+        {% endif %}
+
+        <!-- Using 'for' with additional features -->
+        <div class="row">
+            {% for i in some_data %}
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100 {% cycle 'border-primary' 'border-success' 'border-warning' %}">
+                        <div class="card-body">
+                            <!-- Using 'forloop' built-in variables -->
+                            <h5 class="card-title">
+                                Item #{{ forloop.counter }}
+                                {% if forloop.first %}<span class="badge bg-success">First!</span>{% endif %}
+                                {% if forloop.last %}<span class="badge bg-danger">Last!</span>{% endif %}
+                            </h5>
+
+                            <!-- Various filters demonstration -->
+                            <div class="card-text">
+                                <p><strong>Original:</strong> {{ i }}</p>
+                                <p><strong>Uppercase:</strong> {{ i|upper }}</p>
+                                <p><strong>Title Case:</strong> {{ i|title }}</p>
+                                <p><strong>Truncated to 11:</strong> {{ i|truncatechars:11 }}</p>
+                                {% if i|length > 10 %}
+                                    <p><strong>Length:</strong> {{ i|length }} characters (long text!)</p>
+                                {% else %}
+                                    <p><strong>Length:</strong> {{ i|length }} characters (short text)</p>
+                                {% endif %}
+                            </div>
+
+                            <!-- Using 'default' and 'default_if_none' filters -->
+                            <small class="text-muted">
+                                Status: {{ i.status|default:"Unknown" }} |
+                                ID: {{ i.id|default_if_none:"N/A" }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <h4>No Items Found</h4>
+                        <p>The list is empty! This message appears when the 'for' loop has no items to iterate over.</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Using 'with' template tag for complex expressions -->
+        {% with total_items=some_data|length %}
+            {% if total_items > 0 %}
+                <div class="mt-5 p-4 bg-light rounded">
+                    <h4 class="text-center mb-4">Summary Statistics</h4>
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <h5 class="text-primary">{{ total_items }}</h5>
+                            <p class="text-muted">Total Items</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="text-success">{{ total_items|floatformat:0 }}</h5>
+                            <p class="text-muted">Items per Row</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="text-warning">{% now "s" %}</h5>
+                            <p class="text-muted">Seconds Since Page Start</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Static Image Gallery Section -->
+        <div class="mt-5">
+            <h4 class="text-center mb-4">Image Gallery</h4>
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card">
+                        <img src="{% static 'img/header.jpg' %}" class="card-img-top" alt="Header Image" style="height: 200px; object-fit: cover;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Header Image</h5>
+                            <p class="card-text">This is the same image from our static files, now properly displayed!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Using 'comment' template tag -->
+        {% comment %}
+            This is a multi-line comment that won't appear in the rendered HTML.
+            Useful for developer notes, TODO items, or temporarily disabling code.
+
+            TODO: Add pagination when we have more than 50 items
+            TODO: Add search functionality
+        {% endcomment %}
+
+        <!-- Using 'spaceless' template tag to remove whitespace -->
+        <div class="mt-5 text-center">
+            <h5>Tags Section:</h5>
+            {% spaceless %}
+                <span class="badge bg-primary me-2">Tag 1</span>
+                <span class="badge bg-secondary me-2">Tag 2</span>
+                <span class="badge bg-success">Tag 3</span>
+            {% endspaceless %}
+        </div>
+
+        <!-- Using 'firstof' template tag -->
+        <div class="mt-4 text-center">
+            <p class="lead">
+                <strong>Display Name:</strong>
+                {% firstof user.get_full_name user.username "Anonymous User" %}
+            </p>
+        </div>
+
+        <!-- Using 'widthratio' for simple percentage calculations -->
+        {% if some_data|length > 0 %}
+            <div class="mt-4">
+                <h5 class="text-center">Progress Indicator</h5>
+                <div class="progress" style="height: 25px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                         role="progressbar"
+                         style="width: {% widthratio some_data|length 10 100 %}%"
+                         aria-valuenow="{% widthratio some_data|length 10 100 %}"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
+                        Progress: {% widthratio some_data|length 10 100 %}%
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Navigation Section -->
+        <div class="mt-5 mb-5 text-center">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary">Home</button>
+                <button type="button" class="btn btn-outline-secondary">About</button>
+                <button type="button" class="btn btn-outline-success">Contact</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% include "main/footer.html" %}
+
+<style>
+    .text-shadow {
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    }
+
+    .position-relative .position-absolute {
+        background: rgba(0,0,0,0.3);
+        padding: 2rem;
+        border-radius: 10px;
+    }
+</style>
+
+</body>
+</html>

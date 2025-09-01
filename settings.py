@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.humanize",
     "user_app",  # Your custom app
     "phone_field",
 ]
@@ -133,6 +134,15 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 # Tell Django to use your custom User model instead of the default one
 AUTH_USER_MODEL = 'user_app.User'
+# Custom authentication backend
+# AUTHENTICATION_BACKENDS = [
+#     'user_app.backends.EmailBackend',  # Your custom email backend
+#     'django.contrib.auth.backends.ModelBackend',  # Keep as fallback
+# ]
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/admin/'  # Where to redirect after successful login
+LOGOUT_REDIRECT_URL = '/login/'
 
 # Internationalization
 LANGUAGE_CODE = "en-us"

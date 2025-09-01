@@ -48,4 +48,5 @@ dev = [
     "pytest-django>=4.8.0",
     "ruff>=0.12.7",
     "django-debug-toolbar>=4.4.0",
+    "requests>=2.32.5",
 ]
