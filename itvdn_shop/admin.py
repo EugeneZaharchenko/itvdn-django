@@ -1,14 +1,22 @@
 from django.contrib import admin
-from django.utils.html import format_html
 
-from .models import TV, Notebook, Dishwasher, Brand, Category, VacuumCleaner, Item, Promo
-
+from .models import (
+    TV,
+    Brand,
+    Category,
+    Dishwasher,
+    Notebook,
+    Promo,
+    VacuumCleaner,
+)
 
 for model in [TV, Notebook, Category, VacuumCleaner, Promo, Brand]:
     admin.site.register(model)
 
+
 class DishwasherInstanceInline(admin.TabularInline):
     model = Dishwasher
+
 
 #
 # @admin.register(Brand)
@@ -22,8 +30,14 @@ class DishwasherAdmin(admin.ModelAdmin):
         css = {}
 
     list_filter = ("brand_name", "color", "price")
-    list_display = ('model', 'brand_name', 'price',
-                    'color', 'test_show_promo', 'colored_name')
+    list_display = (
+        "model",
+        "brand_name",
+        "price",
+        "color",
+        "test_show_promo",
+        "colored_name",
+    )
     # fields = [('model', 'brand_name'), ('price', 'color')]
     #
     # fieldsets = (
@@ -35,21 +49,28 @@ class DishwasherAdmin(admin.ModelAdmin):
     #     }),)
 
     fieldsets = (
-        ('General info', {
-            'classes': ('wide', 'extrapretty'),
-            'fields': ('brand_name', 'model'),
-        }),
-        ('Advanced options', {
-            'classes': ('wide', 'extrapretty'),
-            'description': ('Описание полей'),
-            'fields': ('price', 'color'),
-        }),)
-    sortable_by = 'price'
-    search_fields = ['brand_name__pk']
+        (
+            "General info",
+            {
+                "classes": ("wide", "extrapretty"),
+                "fields": ("brand_name", "model"),
+            },
+        ),
+        (
+            "Advanced options",
+            {
+                "classes": ("wide", "extrapretty"),
+                "description": ("Описание полей"),
+                "fields": ("price", "color"),
+            },
+        ),
+    )
+    sortable_by = "price"
+    search_fields = ["brand_name__pk"]
     # search_fields = ['model', 'brand_name']
     # exclude = ('power',)
     # empty_value_display = '-Без бренда-'
-    readonly_fields = ['price']
+    readonly_fields = ["price"]
     #
 
     def test_show_promo(self, obj):
@@ -57,4 +78,3 @@ class DishwasherAdmin(admin.ModelAdmin):
 
     def delete_model(self, request, obj):
         pass
-

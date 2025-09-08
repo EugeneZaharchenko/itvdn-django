@@ -14,27 +14,34 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.global_settings import MEDIA_URL, MEDIA_ROOT
-from django.conf.urls.static import static
-from django.contrib import admin
-from django.urls import path, include
 
 from django.conf import settings
-from user_app.views import AllUsers, DetailViewExample, ListExample, CreateUser, CreateViewExample, CustomLoginView, \
-    UpdateExample, \
-    DeleteExample
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
+
+from user_app.views import (
+    AllUsers,
+    CreateUser,
+    CreateViewExample,
+    CustomLoginView,
+    DeleteExample,
+    DetailViewExample,
+    ListExample,
+    UpdateExample,
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('signup/', CreateUser.as_view(), name="signup"),
-    path('all_users/', AllUsers.as_view(), name="all_users"),
-    path('detailed_user/<pk>/', DetailViewExample.as_view(), name='detail'),
-    path('accounts/', ListExample.as_view(), name='accounts'),
-    path('create/', CreateViewExample.as_view(), name='create'),
-    path('login/', CustomLoginView.as_view(), name='login'),
-    path('delete/<pk>/', DeleteExample.as_view(), name='delete'),
-    path('update/<pk>/', UpdateExample.as_view(), name='update'),
-    path('shop/', include('itvdn_shop.urls')),
+    path("signup/", CreateUser.as_view(), name="signup"),
+    path("all_users/", AllUsers.as_view(), name="all_users"),
+    path("detailed_user/<pk>/", DetailViewExample.as_view(), name="detail"),
+    path("accounts/", ListExample.as_view(), name="accounts"),
+    path("create/", CreateViewExample.as_view(), name="create"),
+    path("login/", CustomLoginView.as_view(), name="login"),
+    path("delete/<pk>/", DeleteExample.as_view(), name="delete"),
+    path("update/<pk>/", UpdateExample.as_view(), name="update"),
+    path("shop/", include("itvdn_shop.urls")),
 ]
 if settings.DEBUG:  # Only serve media in development
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,6 +1,7 @@
 """
 Test settings for ITVDN Django Study Project
 """
+
 from pathlib import Path
 
 import environ
@@ -15,15 +16,15 @@ env = environ.Env(
 )
 
 # Read .env file from root directory
-environ.Env.read_env(BASE_DIR / '.env')
+environ.Env.read_env(BASE_DIR / ".env")
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY', default='test-secret-key-for-ci-only')
+SECRET_KEY = env("SECRET_KEY", default="test-secret-key-for-ci-only")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 INSTALLED_APPS = [
@@ -34,7 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "user_app",
-    "phone_field"
+    "phone_field",
 ]
 
 MIDDLEWARE = [
@@ -48,7 +49,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "urls"
-AUTH_USER_MODEL = 'user_app.User'
+AUTH_USER_MODEL = "user_app.User"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -69,13 +70,13 @@ WSGI_APPLICATION = "wsgi.application"
 
 # Test database using environment variables from .env file
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('POSTGRES_DB', default='django_study_test'),
-        'USER': env('POSTGRES_USER', default='django_user'),
-        'PASSWORD': env('POSTGRES_PASSWORD', default='django_password'),
-        'HOST': env('POSTGRES_HOST', default='localhost'),
-        'PORT': env('POSTGRES_PORT', default=5432),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env("POSTGRES_DB", default="django_study_test"),
+        "USER": env("POSTGRES_USER", default="django_user"),
+        "PASSWORD": env("POSTGRES_PASSWORD", default="django_password"),
+        "HOST": env("POSTGRES_HOST", default="localhost"),
+        "PORT": env("POSTGRES_PORT", default=5432),
     }
 }
 
@@ -83,8 +84,8 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = []
 
 # Internationalization
-LANGUAGE_CODE = env('LANGUAGE_CODE', default='en-us')
-TIME_ZONE = env('TIME_ZONE', default='UTC')
+LANGUAGE_CODE = env("LANGUAGE_CODE", default="en-us")
+TIME_ZONE = env("TIME_ZONE", default="UTC")
 USE_I18N = True
 USE_TZ = True
 
@@ -96,26 +97,26 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Use in-memory cache for tests
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
     }
 }
 
 # Fast password hashing for tests
 PASSWORD_HASHERS = [
-    'django.contrib.auth.hashers.MD5PasswordHasher',
+    "django.contrib.auth.hashers.MD5PasswordHasher",
 ]
 
 # Disable logging during tests
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.NullHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.NullHandler",
         },
     },
-    'root': {
-        'handlers': ['console'],
+    "root": {
+        "handlers": ["console"],
     },
 }
