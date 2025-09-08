@@ -2,15 +2,11 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.views.generic import (TemplateView, DeleteView, CreateView, UpdateView, FormView)
+from django.views.generic import (TemplateView, DeleteView, CreateView, UpdateView, FormView, ListView, DetailView)
 
 from .forms import EmailAuthenticationForm, SignUpForm
 from .forms import RegisterForm
 from .models import User
-
-
-class Index(TemplateView):
-    template_name = 'index.html'
 
 
 class CreateUser(FormView):
@@ -72,6 +68,17 @@ class CustomLoginView(LoginView):
         context['title'] = 'Sign In'
         context['page_header'] = 'Welcome Back'
         return context
+
+
+class ListExample(ListView):
+    template_name = 'accounts/profile.html'
+    queryset = User.objects.all()
+    context_object_name = "users"
+
+
+class DetailViewExample(DetailView):
+    template_name = 'detailed_user.html'
+    model = User
 
 
 class CreateViewExample(CreateView):

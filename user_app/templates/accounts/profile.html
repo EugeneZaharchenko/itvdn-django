@@ -1,0 +1,14 @@
+{% extends 'main/index.html' %}
+{% load static %}
+
+
+{% block content %}
+{% for element in users %}
+{% if element.first_name or element.last_name %}
+<p>{{ element.first_name|default:"" }} {{ element.last_name|default:"" }}</p>
+{% else %}
+<p>Unknown user</p>
+{% endif %}
+<p>{{ element.email }}</p>
+{% endfor %}
+{% endblock %}

@@ -1,13 +1,16 @@
 import random
 import requests
 
-from django.views.generic import (TemplateView, ListView, DetailView, DateDetailView,
+from django.views.generic import (TemplateView, ListView, DateDetailView,
                                   WeekArchiveView, DeleteView, CreateView, UpdateView, FormView)
 from django.contrib.auth.views import LoginView
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 
 response = requests.get("https://raw.githubusercontent.com/dwyl/english-words/master/words.txt")
 words = response.text.strip().split('\n')
+
+User = get_user_model()
 
 
 class Index(TemplateView):
@@ -20,18 +23,6 @@ class Index(TemplateView):
 
 class Report(TemplateView):
     template_name = 'main/report.html'
-
-
-class ListExample(ListView):
-    print('Some users')
-    # template_name = 'accounts/profile.html'
-    # queryset = User.objects.all()
-    # context_object_name = "users"
-
-
-class DetailViewExample(DetailView):
-    template_name = 'detail.html'
-    model = User
 
 
 class DateDetailViewExample(DateDetailView):
@@ -49,4 +40,4 @@ class WeekArchiveViewExample(WeekArchiveView):
     model = User
     date_field = "date_joined"
     context_object_name = "week_users_archive"
-#     http://127.0.0.1:8000/detail-date/2020/feb/24/2
+#     http://127.0.0.1:8000/week-archive/08/

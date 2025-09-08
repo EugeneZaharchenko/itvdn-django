@@ -20,13 +20,16 @@ from django.contrib import admin
 from django.urls import path, include
 
 from django.conf import settings
-from user_app.views import AllUsers, CreateUser, Index, CreateViewExample, CustomLoginView, UpdateExample, DeleteExample
+from user_app.views import AllUsers, DetailViewExample, ListExample, CreateUser, CreateViewExample, CustomLoginView, \
+    UpdateExample, \
+    DeleteExample
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('', Index.as_view(), name="index"),
     path('signup/', CreateUser.as_view(), name="signup"),
     path('all_users/', AllUsers.as_view(), name="all_users"),
+    path('detailed_user/<pk>/', DetailViewExample.as_view(), name='detail'),
+    path('accounts/', ListExample.as_view(), name='accounts'),
     path('create/', CreateViewExample.as_view(), name='create'),
     path('login/', CustomLoginView.as_view(), name='login'),
     path('delete/<pk>/', DeleteExample.as_view(), name='delete'),
