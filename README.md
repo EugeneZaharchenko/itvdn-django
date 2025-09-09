@@ -26,3 +26,8 @@ uv run python manage.py runserver
 1. Django-grappelli
 2. django-admin-index
 3. django-suit
+
+### Local format & checks
+
+ruff check --fix .
+ruff format .

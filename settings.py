@@ -7,8 +7,9 @@ import environ
 BASE_DIR = Path(__file__).resolve().parent
 
 TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
-MEDIA_URL = "media/"
-MEDIA_DIR = os.path.join(BASE_DIR, "media")
+
+MEDIA_URL = "/media/"  # Add leading slash
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/", "img")
 
 # Initialize environment variables
 env = environ.Env()
@@ -56,6 +57,8 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "user_app",  # Your custom app
     "phone_field",
+    "django_premailer",
+    "send_email",
 ]
 
 MIDDLEWARE = [
@@ -117,8 +120,7 @@ else:
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation."
-                "UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
@@ -162,3 +164,14 @@ STATICFILES_FINDERS = [
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# GMAIL CONFIG
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = env("EMAIL_USER")
+EMAIL_RECIPIENT = env("EMAIL_RECIPIENT")
+EMAIL_HOST_PASSWORD = env("EMAIL_PASSWORD")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = "TestSite Team <noreply@example.com>"

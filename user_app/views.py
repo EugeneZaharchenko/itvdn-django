@@ -63,9 +63,7 @@ class CustomLoginView(LoginView):
 
     def form_invalid(self, form):
         """Handle failed login attempt"""
-        messages.error(
-            self.request, "Login failed. Please check your email and password."
-        )
+        messages.error(self.request, "Login failed. Please check your email and password.")
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):

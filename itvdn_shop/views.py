@@ -8,9 +8,7 @@ from django.views.generic import (
     WeekArchiveView,
 )
 
-response = requests.get(
-    "https://raw.githubusercontent.com/dwyl/english-words/master/words.txt"
-)
+response = requests.get("https://raw.githubusercontent.com/dwyl/english-words/master/words.txt")
 words = response.text.strip().split("\n")
 
 User = get_user_model()
