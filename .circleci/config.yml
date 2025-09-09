@@ -98,10 +98,23 @@ jobs:
             python manage.py migrate --settings=settings_ci.test --verbosity=2
 
       - run:
+          name: Install test dependencies
+          command: |
+            source .venv/bin/activate
+            pip install coverage  # if you want coverage reports
+
+      - run:
           name: Run tests
           command: |
             source .venv/bin/activate
             python manage.py test --settings=settings_ci.test --verbosity=2
+
+      - run:
+          name: Run specific email tests
+          command: |
+            source .venv/bin/activate
+            python manage.py test send_email.tests --settings=settings_ci.test --verbosity=2
+
 
 workflows:
   test-and-lint:

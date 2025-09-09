@@ -1,13 +1,18 @@
 """
 Test settings for ITVDN Django Study Project
 """
-
+import os
 from pathlib import Path
 
 import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
+
+MEDIA_URL = "/media/"  # Add leading slash
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/", "img")
 
 # Initialize environment variables
 env = environ.Env(
@@ -28,14 +33,18 @@ ALLOWED_HOSTS = ["*"]
 
 # Application definition
 INSTALLED_APPS = [
+    "itvdn_shop",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "user_app",
+    "django.contrib.humanize",
+    "user_app",  # Your custom app
     "phone_field",
+    "django_premailer",
+    "send_email",
 ]
 
 MIDDLEWARE = [
@@ -53,7 +62,7 @@ AUTH_USER_MODEL = "user_app.User"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -83,6 +92,10 @@ DATABASES = {
 # Password validation - simplified for tests
 AUTH_PASSWORD_VALIDATORS = []
 
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/admin/"  # Where to redirect after successful login
+LOGOUT_REDIRECT_URL = "/login/"
+
 # Internationalization
 LANGUAGE_CODE = env("LANGUAGE_CODE", default="en-us")
 TIME_ZONE = env("TIME_ZONE", default="UTC")
@@ -90,7 +103,16 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = "static/"
+STATIC_URL = "/static/"  # Add leading slash
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # For collectstatic
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),  # Your custom static files
+]
+# Static files finders
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -120,3 +142,12 @@ LOGGING = {
         "handlers": ["console"],
     },
 }
+
+EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = env("EMAIL_USER")
+EMAIL_RECIPIENT = env("EMAIL_RECIPIENT")
+EMAIL_HOST_PASSWORD = env("EMAIL_PASSWORD")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = "TestSite Team <noreply@example.com>"
