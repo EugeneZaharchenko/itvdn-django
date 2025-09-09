@@ -1,13 +1,14 @@
-from pathlib import Path
 import os
+from pathlib import Path
+
 import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
 
-TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
-MEDIA_URL = 'media/'
-MEDIA_DIR = os.path.join(BASE_DIR, 'media')
+TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
+MEDIA_URL = "media/"
+MEDIA_DIR = os.path.join(BASE_DIR, "media")
 
 # Initialize environment variables
 env = environ.Env()
@@ -16,7 +17,7 @@ env = environ.Env()
 docker_env_file = BASE_DIR / ".env.docker"
 regular_env_file = BASE_DIR / ".env"
 
-is_local = os.getenv('LOCAL', '').lower() == 'true'
+is_local = os.getenv("LOCAL", "").lower() == "true"
 
 if is_local:
     # Force use of regular .env file
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.humanize",
     "user_app",  # Your custom app
     "phone_field",
 ]
@@ -71,7 +73,7 @@ ROOT_URLCONF = "urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -119,20 +121,26 @@ AUTH_PASSWORD_VALIDATORS = [
                 "UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation."
-                "MinimumLengthValidator",
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation."
-                "CommonPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation."
-                "NumericPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 # Tell Django to use your custom User model instead of the default one
-AUTH_USER_MODEL = 'user_app.User'
+AUTH_USER_MODEL = "user_app.User"
+# Custom authentication backend
+# AUTHENTICATION_BACKENDS = [
+#     'user_app.backends.EmailBackend',  # Your custom email backend
+#     'django.contrib.auth.backends.ModelBackend',  # Keep as fallback
+# ]
+
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/admin/"  # Where to redirect after successful login
+LOGOUT_REDIRECT_URL = "/login/"
 
 # Internationalization
 LANGUAGE_CODE = "en-us"
@@ -141,16 +149,16 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'  # Add leading slash
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # For collectstatic
+STATIC_URL = "/static/"  # Add leading slash
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # For collectstatic
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # Your custom static files
+    os.path.join(BASE_DIR, "static"),  # Your custom static files
 ]
 # Static files finders
 STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
 # Default primary key field type
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
