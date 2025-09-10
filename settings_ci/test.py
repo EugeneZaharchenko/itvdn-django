@@ -1,6 +1,7 @@
 """
 Test settings for ITVDN Django Study Project
 """
+
 import os
 from pathlib import Path
 
@@ -151,3 +152,7 @@ EMAIL_HOST_PASSWORD = env("EMAIL_PASSWORD")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = "TestSite Team <noreply@example.com>"
+
+MAILCHIMP_API_KEY = env("MLCHMP_KEY")
+MAILCHIMP_DATA_CENTER = env("MLCHMP_DATA_CENTER")
+MAILCHIMP_EMAIL_LIST_ID = env("MLCHMP_EMAIL_LIST_ID")

@@ -41,4 +41,5 @@ class WeekArchiveViewExample(WeekArchiveView):
     date_field = "date_joined"
     context_object_name = "week_users_archive"
 
+
 #     http://127.0.0.1:8000/week-archive/08/

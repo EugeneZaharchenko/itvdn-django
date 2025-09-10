@@ -10,9 +10,10 @@ requires-python = ">=3.13"
 dependencies = [
     "django>=5.0,<6.0",
     "django-environ>=0.11.0",
-    "psycopg[binary]>=3.2.9",
+    "psycopg[binary]>=3.2.10",
     "Pillow>=11.3.0",
     "django-phone-field>=1.8.1",
+    "django_premailer>=0.2.0",
 ]
 
 [project.urls]
@@ -44,9 +45,9 @@ addopts = "--tb=short -v"
 # Development dependencies
 [dependency-groups]
 dev = [
-    "pytest>=8.4.1",
+    "pytest>=8.4.2",
     "pytest-django>=4.8.0",
-    "ruff>=0.12.7",
+    "ruff>=0.12.12",
     "django-debug-toolbar>=4.4.0",
     "requests>=2.32.5",
 ]
