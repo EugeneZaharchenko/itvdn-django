@@ -1,7 +1,7 @@
 # ruff.toml
 
 # Line length setting (goes in root, not in [lint])
-line-length = 88
+line-length = 110
 
 # Exclude directories
 exclude = [

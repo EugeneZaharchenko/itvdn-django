@@ -46,9 +46,7 @@ class EmailAuthenticationForm(AuthenticationForm):
     )
 
     password = forms.CharField(
-        widget=forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": "Enter your password"}
-        ),
+        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Enter your password"}),
         label="Password",
     )
 
@@ -75,8 +73,7 @@ class EmailAuthenticationForm(AuthenticationForm):
 
             if self.user_cache is None:
                 raise forms.ValidationError(
-                    "Please enter a correct email and password. "
-                    "Note that both fields may be case-sensitive."
+                    "Please enter a correct email and password. Note that both fields may be case-sensitive."
                 )
             else:
                 self.confirm_login_allowed(self.user_cache)

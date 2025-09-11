@@ -8,9 +8,7 @@ from django.views.generic import (
     WeekArchiveView,
 )
 
-response = requests.get(
-    "https://raw.githubusercontent.com/dwyl/english-words/master/words.txt"
-)
+response = requests.get("https://raw.githubusercontent.com/dwyl/english-words/master/words.txt")
 words = response.text.strip().split("\n")
 
 User = get_user_model()
@@ -42,5 +40,6 @@ class WeekArchiveViewExample(WeekArchiveView):
     model = User
     date_field = "date_joined"
     context_object_name = "week_users_archive"
+
 
 #     http://127.0.0.1:8000/week-archive/08/

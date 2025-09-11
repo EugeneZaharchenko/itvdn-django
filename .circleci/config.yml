@@ -75,6 +75,12 @@ jobs:
             echo "LANGUAGE_CODE=$LANGUAGE_CODE" >> .env
             echo "TIME_ZONE=$TIME_ZONE" >> .env
             echo "ALLOWED_HOSTS=localhost,127.0.0.1,*" >> .env
+            echo "EMAIL_USER=$EMAIL_USER" >> .env
+            echo "EMAIL_RECIPIENT=$EMAIL_RECIPIENT" >> .env
+            echo "EMAIL_PASSWORD=EMAIL_PASSWORD" >> .env
+            echo "MLCHMP_KEY=MLCHMP_KEY" >> .env
+            echo "MLCHMP_DATA_CENTER=$MLCHMP_DATA_CENTER" >> .env
+            echo "MLCHMP_EMAIL_LIST_ID=$MLCHMP_EMAIL_LIST_ID" >> .env
 
       - run:
           name: Run code formatting and linting with ruff
@@ -98,10 +104,23 @@ jobs:
             python manage.py migrate --settings=settings_ci.test --verbosity=2
 
       - run:
+          name: Install test dependencies
+          command: |
+            source .venv/bin/activate
+            pip install coverage  # if you want coverage reports
+
+      - run:
           name: Run tests
           command: |
             source .venv/bin/activate
             python manage.py test --settings=settings_ci.test --verbosity=2
+
+      - run:
+          name: Run specific email tests
+          command: |
+            source .venv/bin/activate
+            python manage.py test send_email.tests --settings=settings_ci.test --verbosity=2
+
 
 workflows:
   test-and-lint:
