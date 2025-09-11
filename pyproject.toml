@@ -14,6 +14,7 @@ dependencies = [
     "Pillow>=11.3.0",
     "django-phone-field>=1.8.1",
     "django_premailer>=0.2.0",
+    "mailchimp_marketing>=3.0.80",
 ]
 
 [project.urls]
