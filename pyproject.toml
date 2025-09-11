@@ -10,7 +10,7 @@ requires-python = ">=3.13"
 dependencies = [
     "django>=5.0,<6.0",
     "django-environ>=0.11.0",
-    "psycopg[binary]>=3.2.10",
+    "psycopg[binary]>=3.1.0,<3.3.0",
     "Pillow>=11.3.0",
     "django-phone-field>=1.8.1",
     "django_premailer>=0.2.0",
