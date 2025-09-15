@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "phone_field",
     "django_premailer",
     "send_email",
+    "reset_password",
 ]
 
 MIDDLEWARE = [

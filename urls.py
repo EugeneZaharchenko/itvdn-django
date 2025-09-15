@@ -43,6 +43,7 @@ urlpatterns = [
     path("update/<pk>/", UpdateExample.as_view(), name="update"),
     path("shop/", include("itvdn_shop.urls")),
     path("", include("send_email.urls")),
+    path("", include("reset_password.urls")),
 ]
 if settings.DEBUG:  # Only serve media in development
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
